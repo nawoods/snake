@@ -2,6 +2,10 @@ import sys
 import pygame
 import random
 
+# lose the game
+def lose():
+    pass
+
 def main():
     size = width, height = 400, 300
     
@@ -22,9 +26,13 @@ def main():
 
     direction = [0, -10]
     snakelength = 5
+    # coordinates of all current snake segments
     segments = []
 
-    while True:
+    # flag variable to determine whether or not the game is on
+    game_started = True
+
+    while game_started:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
@@ -41,21 +49,39 @@ def main():
         segments.append((headrect.x, headrect.y))
         headrect.move_ip(direction)
 
+        # milliseconds between snake movements
         pygame.time.wait(100)
 
+        # what to do when food collected
         if headrect.colliderect(foodrect):
             snakelength += 3
             foodrect.x = random.randint(0, width // 10 - 1) * 10
             foodrect.y = random.randint(0, height // 10 - 1) * 10
             
 
+        # get rid of extra tail segments
         while len(segments) > snakelength:
             tailrect.x, tailrect.y = segments.pop(0)
             screen.blit(black_sq, tailrect)
 
+        # let the user see what's going on
         screen.blit(green_pix, foodrect)
         screen.blit(green_pix, headrect)
         pygame.display.flip()
+
+        # if headrect is touching snake body, lose the game
+        for i in segments:
+            if (headrect.x, headrect.y) == i:
+                game_started = False
+                lose()
+
+        # if headrect outside of screen, lose game
+        if headrect.x < 0 or headrect.x > width:
+            game_started = False
+            lose()
+        if headrect.y < 0 or headrect.y > height:
+            game_started = False
+            lose()
 
 if __name__ == '__main__':
     main()
