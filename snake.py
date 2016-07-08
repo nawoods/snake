@@ -76,10 +76,10 @@ def main():
                 lose()
 
         # if headrect outside of screen, lose game
-        if headrect.x < 0 or headrect.x > width:
+        if headrect.x < 0 or headrect.x >= width:
             game_started = False
             lose()
-        if headrect.y < 0 or headrect.y > height:
+        if headrect.y < 0 or headrect.y >= height:
             game_started = False
             lose()
 
