@@ -6,7 +6,7 @@ import random
 def lose():
     pass
 
-def printSomething(message, color, xstart, ystart, screen):
+def printSomething(message, color, xstart, ystart, screen, forbidden = []):
     #list of pixels whose color was changed
     changed_pixels = []
 
@@ -38,10 +38,12 @@ def printSomething(message, color, xstart, ystart, screen):
 
     for letter in message:
         for loc in alphabet[letter]:
-            changed_pixels.append((xstart + loc[0], ystart + loc[1]))
-            rect.x = xstart + loc[0]
-            rect.y = ystart + loc[1]
-            screen.blit(pix, rect)
+            moved = (xstart + loc[0], ystart + loc[1])
+            changed_pixels.append(moved)
+            rect.x = moved[0]
+            rect.y = moved[1]
+            if moved not in forbidden:
+                screen.blit(pix, rect)
 
         xstart += max([i[0] for i in alphabet[letter]]) + 20
 
@@ -100,9 +102,11 @@ def game(width, height, screen):
             foodrect.y = random.randint(0, height // 10 - 1) * 10
             score += 1
             for i in score_pixels:
-                tailrect.x, tailrect.y = i
-                screen.blit(black_sq, tailrect)
-            score_pixels = printSomething(score, "blue", 20, 20, screen)
+                if i not in segments:
+                    tailrect.x, tailrect.y = i
+                    screen.blit(black_sq, tailrect)
+            score_pixels = printSomething(score, "blue", 20, 20, screen,
+            forbidden = segments)
             
 
         # get rid of extra tail segments
